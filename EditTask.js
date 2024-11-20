@@ -1,27 +1,34 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, Button, StyleSheet, Alert } from 'react-native';
+import { View, TextInput, Text, Button, StyleSheet, Switch } from 'react-native';
 
 const EditTask = ({ route, navigation }) => {
-  const { task, editTask } = route.params; // Obtenim la tasca i la funció editTask des de MainPage
-
+  const { task } = route.params; // Rebre la tasca per editar
   const [title, setTitle] = useState(task.title);
   const [date, setDate] = useState(task.date);
+  const [hasDueDate, setHasDueDate] = useState(task.hasDueDate);
 
+  // Actualitzar la data si el switch està activat
   useEffect(() => {
-    setTitle(task.title); // Inicialitzem els valors amb la tasca seleccionada
-    setDate(task.date);
-  }, [task]);
+    if (!hasDueDate) {
+      setDate(''); // Si no hi ha data, es borra la data
+    }
+  }, [hasDueDate]);
 
-  const handleEditTask = () => {
-    if (!title) {
-      Alert.alert('Error', 'El títol és obligatori!');
+  const handleSave = () => {
+    if (title.trim() === '') {
+      alert('El títol és obligatori!');
       return;
     }
 
-    const updatedTask = { ...task, title, date };
+    // Si el Switch està activat i no s'ha introduït la data, mostrar un error
+    if (hasDueDate && date.trim() === '') {
+      alert('Si "Has Due Date" està activat, introdueix una data!');
+      return;
+    }
 
-    editTask(updatedTask); // Cridem la funció editTask amb la tasca actualitzada
-    navigation.goBack(); // Tornem a la pantalla principal
+    // Guardar els canvis i tornar a la pantalla anterior
+    // Actualitzar la tasca a la llista
+    navigation.goBack();
   };
 
   return (
@@ -35,14 +42,24 @@ const EditTask = ({ route, navigation }) => {
         onChangeText={setTitle}
       />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Data límit"
-        value={date}
-        onChangeText={setDate}
-      />
+      <View style={styles.switchContainer}>
+        <Text>Has Due Date</Text>
+        <Switch
+          value={hasDueDate}
+          onValueChange={setHasDueDate}
+        />
+      </View>
 
-      <Button title="Guardar Canvis" onPress={handleEditTask} />
+      {hasDueDate && (
+        <TextInput
+          style={styles.input}
+          placeholder="Data límit"
+          value={date}
+          onChangeText={setDate}
+        />
+      )}
+
+      <Button title="Guardar" onPress={handleSave} />
     </View>
   );
 };
@@ -66,6 +83,11 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     paddingLeft: 10,
     borderRadius: 5,
+  },
+  switchContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
   },
 });
 

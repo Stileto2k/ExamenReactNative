@@ -3,11 +3,20 @@ import { View, Text, FlatList, StyleSheet, TouchableOpacity, Alert } from 'react
 import { Switch } from 'react-native';
 
 const MainPage = ({ navigation }) => {
+  // Array inicial de tasques
   const [tasks, setTasks] = useState([
-    { id: '1', title: 'Comprar pa', date: '2024-11-20', completed: false },
-    { id: '2', title: 'Estudiar React Native', date: '2024-11-21', completed: false },
-    { id: '3', title: 'Fer esport', date: '2024-11-22', completed: true },
+    { id: '1', title: 'Comprar pa', date: '2024-11-20', completed: false, hasDueDate: true },
+    { id: '2', title: 'Estudiar React Native', date: '', completed: false, hasDueDate: false },
+    { id: '3', title: 'Fer esport', date: '2024-11-22', completed: true, hasDueDate: true },
   ]);
+
+  // Funció per afegir una nova tasca
+  const addTask = (task) => {
+    setTasks((prevTasks) => [
+      ...prevTasks,
+      { id: String(prevTasks.length + 1), ...task },
+    ]);
+  };
 
   // Funció per alternar el checkbox d'una tasca
   const toggleTaskCompletion = (id) => {
@@ -34,18 +43,14 @@ const MainPage = ({ navigation }) => {
     );
   };
 
-  // Funció per afegir una nova tasca
-  const addTask = (newTask) => {
-    setTasks((prevTasks) => [...prevTasks, newTask]);
+  // Funció per editar una tasca
+  const editTask = (task) => {
+    navigation.navigate('EditTask', { task }); // Passar tasca per editar
   };
 
-  // Funció per editar una tasca
-  const editTask = (updatedTask) => {
-    setTasks((prevTasks) =>
-      prevTasks.map((task) =>
-        task.id === updatedTask.id ? updatedTask : task
-      )
-    );
+  // Funció per navegar a la pantalla de crear tasca
+  const handleCreateTask = () => {
+    navigation.navigate('CreateTask', { addTask });
   };
 
   // Renderitzar cada tasca
@@ -56,14 +61,24 @@ const MainPage = ({ navigation }) => {
         onValueChange={() => toggleTaskCompletion(item.id)}
       />
       <View style={styles.taskDetails}>
-        <Text style={[styles.taskTitle, item.completed && styles.completedTask]}>
-          {item.title} {item.date ? `- ${item.date}` : ''}
+        <Text
+          style={[
+            styles.taskTitle,
+            item.completed && styles.completedTask, // Afegir estil per marcar com completat
+          ]}
+        >
+          {item.title}
+        </Text>
+        <Text
+          style={[
+            styles.taskDate,
+            item.completed && styles.completedTask, // Afegir estil per marcar la data com completada
+          ]}
+        >
+          {item.date ? ` - ${item.date}` : ' - Sense data límit'}
         </Text>
       </View>
-      <TouchableOpacity
-        style={styles.editButton}
-        onPress={() => navigation.navigate('EditTask', { task: item, editTask })}
-      >
+      <TouchableOpacity style={styles.editButton} onPress={() => editTask(item)}>
         <Text style={styles.editButtonText}>Editar</Text>
       </TouchableOpacity>
       <TouchableOpacity style={styles.deleteButton} onPress={() => deleteTask(item.id)}>
@@ -80,18 +95,17 @@ const MainPage = ({ navigation }) => {
         keyExtractor={(item) => item.id}
         renderItem={renderTask}
       />
-      <TouchableOpacity
-        style={styles.addButton}
-        onPress={() => navigation.navigate('CreateTask', { addTask })}
-      >
-        <Text style={styles.addButtonText}>Crear Nova Tasca</Text>
+
+      {/* Botó de crear nova tasca */}
+      <TouchableOpacity style={styles.createTaskButton} onPress={handleCreateTask}>
+        <Text style={styles.createTaskButtonText}>Crear Nova Tasca</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-// Estils per a la pantalla
 const styles = StyleSheet.create({
+  // Estils de la pantalla
   container: {
     flex: 1,
     padding: 20,
@@ -124,6 +138,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: 'bold',
   },
+  taskDate: {
+    fontSize: 14,
+    color: '#666',
+  },
   completedTask: {
     textDecorationLine: 'line-through',
     color: '#aaa',
@@ -132,32 +150,32 @@ const styles = StyleSheet.create({
     backgroundColor: '#ff5252',
     padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
   },
   deleteButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
   editButton: {
-    backgroundColor: '#4CAF50',
+    backgroundColor: '#ff9800',
     padding: 10,
     borderRadius: 5,
-    marginLeft: 10,
+    marginRight: 10,
   },
   editButtonText: {
     color: '#fff',
     fontWeight: 'bold',
   },
-  addButton: {
+  createTaskButton: {
     backgroundColor: '#4CAF50',
     padding: 15,
     borderRadius: 5,
     marginTop: 20,
     alignItems: 'center',
   },
-  addButtonText: {
+  createTaskButtonText: {
     color: '#fff',
     fontWeight: 'bold',
+    fontSize: 16,
   },
 });
 
