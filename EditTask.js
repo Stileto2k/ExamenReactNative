@@ -1,40 +1,32 @@
 import React, { useState, useEffect } from 'react';
-import { View, TextInput, Text, Button, StyleSheet, Switch } from 'react-native';
+import { View, TextInput, Text, Button, StyleSheet, Switch, Alert } from 'react-native';
 
 const EditTask = ({ route, navigation }) => {
-  const { task } = route.params; // Rebre la tasca per editar
+  const { task, updateTask } = route.params; // Obtenim la tasca i la funció updateTask del route params
   const [title, setTitle] = useState(task.title);
-  const [date, setDate] = useState(task.date);
-  const [hasDueDate, setHasDueDate] = useState(task.hasDueDate);
+  const [dueDate, setDueDate] = useState(task.dueDate || ''); // Si no hi ha data límit, es deixa en blanc
+  const [hasDueDate, setHasDueDate] = useState(task.dueDate ? true : false); // Si ja hi ha una data, el switch serà true
 
-  // Actualitzar la data si el switch està activat
   useEffect(() => {
-    if (!hasDueDate) {
-      setDate(''); // Si no hi ha data, es borra la data
-    }
-  }, [hasDueDate]);
+    setTitle(task.title);
+    setDueDate(task.dueDate || '');
+    setHasDueDate(task.dueDate ? true : false);
+  }, [task]);
 
   const handleSave = () => {
-    if (title.trim() === '') {
-      alert('El títol és obligatori!');
+    if (!title) {
+      Alert.alert('Error', 'El títol és obligatori!');
       return;
     }
-
-    // Si el Switch està activat i no s'ha introduït la data, mostrar un error
-    if (hasDueDate && date.trim() === '') {
-      alert('Si "Has Due Date" està activat, introdueix una data!');
-      return;
-    }
-
-    // Guardar els canvis i tornar a la pantalla anterior
-    // Actualitzar la tasca a la llista
-    navigation.goBack();
+    updateTask({ ...task, title, dueDate: hasDueDate ? dueDate : null }); // Actualitzem la tasca amb les dades modificades
+    navigation.goBack(); // Tornem a la pantalla principal
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.header}>Editar Tasca</Text>
 
+      {/* Input per al títol */}
       <TextInput
         style={styles.input}
         placeholder="Títol de la tasca"
@@ -42,23 +34,25 @@ const EditTask = ({ route, navigation }) => {
         onChangeText={setTitle}
       />
 
+      {/* Switch per a la data límit */}
       <View style={styles.switchContainer}>
-        <Text>Has Due Date</Text>
+        <Text style={styles.switchLabel}>Has due date?</Text>
         <Switch
           value={hasDueDate}
-          onValueChange={setHasDueDate}
+          onValueChange={setHasDueDate} // Canvia l'estat de hasDueDate
         />
       </View>
 
-      {hasDueDate && (
-        <TextInput
-          style={styles.input}
-          placeholder="Data límit"
-          value={date}
-          onChangeText={setDate}
-        />
-      )}
+      {/* Input per la data límit */}
+      <TextInput
+        style={styles.input}
+        placeholder="Data límit (opcional)"
+        value={dueDate}
+        onChangeText={setDueDate}
+        editable={hasDueDate} // Només editable si el switch està activat
+      />
 
+      {/* Botó per guardar els canvis */}
       <Button title="Guardar" onPress={handleSave} />
     </View>
   );
@@ -86,8 +80,13 @@ const styles = StyleSheet.create({
   },
   switchContainer: {
     flexDirection: 'row',
+    justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: 20,
+  },
+  switchLabel: {
+    fontSize: 16,
+    color: '#333',
   },
 });
 

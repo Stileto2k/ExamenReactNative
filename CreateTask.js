@@ -44,14 +44,14 @@ const CreateTask = ({ navigation, route }) => {
         />
       </View>
 
-      {hasDueDate && (
-        <TextInput
-          style={styles.input}
-          placeholder="Data límit"
-          value={date}
-          onChangeText={setDate}
-        />
-      )}
+      <TextInput
+        style={styles.input}
+        placeholder="Data límit"
+        value={date}
+        onChangeText={setDate}
+        editable={hasDueDate} // Desactivar si no hi ha data límit
+        placeholderTextColor={hasDueDate ? '#000' : '#aaa'} // Cambiar el color del placeholder
+      />
 
       <Button
         title="Crear Tasca"
