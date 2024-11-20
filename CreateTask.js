@@ -27,7 +27,7 @@ const CreateTask = ({ navigation, route }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Crear Nova Tasca</Text>
+      
       
       <TextInput
         style={styles.input}
@@ -37,7 +37,7 @@ const CreateTask = ({ navigation, route }) => {
       />
 
       <View style={styles.switchContainer}>
-        <Text style={styles.switchLabel}>Has due date?</Text>
+        <Text style={styles.switchLabel}>Has due time?</Text>
         <Switch
           value={hasDueDate}
           onValueChange={setHasDueDate}

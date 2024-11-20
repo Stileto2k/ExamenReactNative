@@ -78,9 +78,7 @@ const MainPage = ({ navigation }) => {
           {item.date ? ` - ${item.date}` : ' - Sense data límit'}
         </Text>
       </View>
-      <TouchableOpacity style={styles.editButton} onPress={() => editTask(item)}>
-        <Text style={styles.editButtonText}>Editar</Text>
-      </TouchableOpacity>
+      
       <TouchableOpacity style={styles.deleteButton} onPress={() => deleteTask(item.id)}>
         <Text style={styles.deleteButtonText}>Eliminar</Text>
       </TouchableOpacity>
@@ -89,7 +87,7 @@ const MainPage = ({ navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Llistat de Tasques</Text>
+      <Text style={styles.header}>Tasks List</Text>
       <FlatList
         data={tasks}
         keyExtractor={(item) => item.id}

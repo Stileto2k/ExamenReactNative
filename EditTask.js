@@ -24,7 +24,7 @@ const EditTask = ({ route, navigation }) => {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>Editar Tasca</Text>
+     
 
       {/* Input per al títol */}
       <TextInput
@@ -46,7 +46,7 @@ const EditTask = ({ route, navigation }) => {
       {/* Input per la data límit */}
       <TextInput
         style={styles.input}
-        placeholder="Data límit (opcional)"
+        placeholder="Data límit"
         value={dueDate}
         onChangeText={setDueDate}
         editable={hasDueDate} // Només editable si el switch està activat
