@@ -1,20 +1,22 @@
+import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native'; // Afegit per a la navegació
+import { createStackNavigator } from '@react-navigation/stack'; // Afegit per a la creació de stack
+import MainPage from './MainPage'; // Pantalla principal
+import CreateTask from './CreateTask'; // Pantalla de creació de tasques
+import EditTask from './EditTask'; // Pantalla d'edició de tasques
+
+const Stack = createStackNavigator(); // Creació de stack de navegació
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="MainPage">
+        <Stack.Screen name="MainPage" component={MainPage} />
+        <Stack.Screen name="CreateTask" component={CreateTask} />
+        <Stack.Screen name="EditTask" component={EditTask} />
+      </Stack.Navigator>
       <StatusBar style="auto" />
-    </View>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
